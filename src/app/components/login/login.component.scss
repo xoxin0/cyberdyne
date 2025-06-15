@@ -1,0 +1,25 @@
+@use "../../common/style" as *;
+
+.container {
+  @include ui-form;
+
+  .footer-login {
+    display: flex;
+    margin-top: 50px;
+    justify-content: center;
+    width: 100%;
+
+    .footer-no-account-p {
+      margin-right: 15px;
+    }
+
+    .link-register {
+      color: $button-color;
+      text-decoration: none;
+
+      &:hover {
+        color: $light-color;
+      }
+    }
+  }
+}

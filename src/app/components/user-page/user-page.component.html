@@ -1,0 +1,148 @@
+<div class="container" *ngIf="!onApplicationForm && !isSubmitted">
+  <button class="logout-btn" (click)="logout()">Выйти</button>
+  <div class="welcome-container">
+
+    <div class="hello-user">
+      <h2>Здравствуйте, {{ name }}!</h2>
+    </div>
+
+    <button
+      class="application-btn"
+      (click)="turnApplicationForm()"
+    >
+      Подать заявку
+    </button>
+  </div>
+</div>
+
+<div
+  class="application-container"
+  *ngIf="onApplicationForm && !isSubmitted"
+>
+  <form [formGroup]="applicationForm" class="application-form">
+    <h1 class="title">Подача заявки</h1>
+
+    <div class="input-container">
+      <label for="fullName">ФИО:</label>
+      <input
+        type="text"
+        id="fullName"
+        formControlName="fullName"
+      />
+
+      <div
+        *ngIf="applicationForm.get('fullName')?.invalid &&
+        applicationForm.get('fullName')?.touched"
+        class="error-message"
+      >
+        <span *ngIf="applicationForm.get('fullName')?.errors?.['required']">ФИО обязательно</span>
+        <span *ngIf="applicationForm.get('fullName')?.errors?.['pattern']">Некорректное ФИО</span>
+      </div>
+    </div>
+
+    <div class="input-container">
+      <label for="email">Email:</label>
+      <input
+        type="text"
+        id="email"
+        formControlName="email"
+      />
+
+      <div
+        *ngIf="applicationForm.get('email')?.invalid &&
+        applicationForm.get('email')?.touched"
+        class="error-message"
+      >
+        <span *ngIf="applicationForm.get('email')?.errors?.['required']">Email обязателен</span>
+        <span *ngIf="applicationForm.get('email')?.errors?.['email']">Введите корректный email</span>
+      </div>
+    </div>
+
+    <div class="input-container">
+      <label for="phone">Номер телефона:</label>
+      <input
+        type="tel"
+        id="phone"
+        formControlName="phone"
+      />
+
+      <div
+        *ngIf="applicationForm.get('phone')?.invalid &&
+        applicationForm.get('phone')?.touched"
+        class="error-message"
+      >
+        <span *ngIf="applicationForm.get('phone')?.errors?.['required']">Телефон обязателен</span>
+        <span *ngIf="applicationForm.get('phone')?.errors?.['pattern']">Введите корректный номер</span>
+      </div>
+    </div>
+
+    <div class="input-container">
+      <label for="organization">Название организации:</label>
+      <input
+        type="text"
+        id="organization"
+        formControlName="organization"
+      />
+      <div
+        *ngIf="applicationForm.get('organization')?.invalid &&
+        applicationForm.get('organization')?.touched"
+        class="error-message"
+      >
+        <span *ngIf="applicationForm.get('organization')?.errors?.['required']">Название организации обязательно</span>
+      </div>
+    </div>
+
+    <div class="checkbox-container">
+      <label for="agree">Хотите получать статус заявки?</label>
+      <input
+        type="checkbox"
+        id="agree"
+        formControlName="toggle"
+      />
+    </div>
+
+    <button
+      class="send-btn"
+      (click)="sendApplication()"
+    >
+      Отправить
+    </button>
+  </form>
+</div>
+
+<div class="congratulation-container" *ngIf="isSubmitted">
+  <button
+    (click)="logout()"
+    class="logout-btn"
+  >
+    Выйти
+  </button>
+
+  <div class="congratulation-message">
+    <h1 class="status-title-h1">Поздравляем!!!</h1>
+    <p class="status-title">Ваша заявка успешно отправлена. Ожидайте)</p>
+  </div>
+
+  <h2>Ваша заявка:</h2>
+  <div class="application-info-container">
+    <p class="info-item">{{ applicationForm.value.fullName }}</p>
+    <p class="info-item">{{ applicationForm.value.email }}</p>
+    <p class="info-item">{{ applicationForm.value.phone }}</p>
+
+    <p
+      class="info-item"
+      *ngIf="currentUser?.organization !== undefined"
+    >
+      {{ currentUser?.organization }}
+    </p>
+
+    <p
+      class="info-item"
+      *ngIf="applicationForm.value.organization !== ''"
+    >
+      {{ applicationForm.value.organization }}
+    </p>
+
+    <p class="info-item status">{{ currentUser?.status }}</p>
+  </div>
+</div>

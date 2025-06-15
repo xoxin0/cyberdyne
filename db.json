@@ -1,0 +1,60 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "fullName": "admin",
+      "email": "admin@gmail.com",
+      "password": "admin123"
+    },
+    {
+      "id": "5053",
+      "fullName": "Разаев Андрей Дмитриевич",
+      "email": "zxc@gmail.com",
+      "phone": "89999999999",
+      "password": "123456",
+      "organization": "ооо тмыв денег",
+      "status": "Пропуск готов",
+      "toggle": false
+    },
+    {
+      "id": "deb8",
+      "fullName": "Разаев Андрей Дмитриевич",
+      "email": "qwe@gmail.com",
+      "phone": "89999999999",
+      "password": "123456",
+      "organization": "ип охуй",
+      "status": "Отклонено",
+      "toggle": true
+    },
+    {
+      "id": "3817",
+      "fullName": "андреев андрей андреич",
+      "email": "qwerty@gmail.com",
+      "phone": "89999999999",
+      "password": "123456",
+      "organization": "ооо тмыв денег",
+      "status": "В обработке",
+      "toggle": true
+    },
+    {
+      "id": "621e",
+      "fullName": "иван иван иван",
+      "email": "asd@gmail.com",
+      "phone": "89999999999",
+      "password": "123456",
+      "organization": "ип охуй",
+      "status": "В обработке",
+      "toggle": true
+    },
+    {
+      "id": "a06f",
+      "fullName": "asdasd asdasd asdasd",
+      "email": "asdasd@gmail.com",
+      "phone": "89999999999",
+      "password": "123456",
+      "organization": "ооо тмыв денег",
+      "status": "В обработке",
+      "toggle": true
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+$background-color: #161633;
+$light-color: #f1f1f1;
+$border-color: #6868de;
+$dark-color: #01011f;
+$button-color: #007bff;
+$background-chat-color: #393985;
+
+@mixin ui-button {
+  transition: 0.4s;
+  padding: 8px 20px;
+  background: $button-color;
+  color: $light-color;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    transition: 0.4s;
+    background-color: $dark-color;
+    transform: scale(1.05);
+  }
+}
+
+@mixin ui-input {
+  width: 100%;
+  color: $light-color;
+  background-color: $background-color;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  transition: outline 0.2s ease;
+
+  &:focus {
+    outline: $dark-color 2px solid;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+@mixin ui-form {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $background-color;
+  color: $light-color;
+
+  .register-form, .login-form, .application-form {
+    width: 600px;
+    height: 55%;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: $background-chat-color;
+
+    .title {
+      margin-bottom: 15px;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      &:not(:first-child) {
+        margin-top: 15px;
+      }
+
+      #password, #email, #fullName, #phone, #organization {
+        @include ui-input;
+      }
+
+      .error-message {
+        color: red;
+        margin-left: 5px;
+        font-size: 12px;
+      }
+    }
+
+    .login-btn, .register-btn, .send-btn {
+      margin-top: 15px;
+      @include ui-button;
+
+      &:disabled {
+        opacity: 0.7;
+        transform: none;
+
+        &:hover {
+          background-color: $button-color;
+        }
+      }
+    }
+  }
+}

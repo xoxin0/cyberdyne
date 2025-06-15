@@ -1,0 +1,17 @@
+@use "../../common/style" as *;
+
+.container {
+  @include ui-form;
+
+  .register-form {
+    position: relative;
+    height: 60%;
+
+    .go-login-btn {
+      @include ui-button;
+      position: absolute;
+      top: 30px;
+      left: 30px;
+    }
+  }
+}

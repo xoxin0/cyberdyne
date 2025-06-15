@@ -1,0 +1,145 @@
+@use "../../common/style" as *;
+
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  background-color: $background-color;
+  color: $light-color;
+  gap: 20px;
+  position: relative;
+
+  .logout-btn {
+    @include ui-button;
+    align-self: end;
+    position: absolute;
+    top: 50px;
+    right: 50px;
+  }
+
+  .welcome-container {
+    display: flex;
+    flex-direction: column;
+
+    .hello-user {
+      font-size: 24px;
+    }
+
+    .application-btn {
+      @include ui-button;
+      align-self: center;
+      margin-top: 30px;
+    }
+  }
+}
+
+.application-container {
+  @include ui-form;
+
+  .input-container {
+    width: 40%;
+  }
+
+  .checkbox-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    font-size: 14px;
+  }
+}
+
+.congratulation-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  background-color: $background-color;
+  color: $light-color;
+
+  .logout-btn {
+    @include ui-button;
+    position: absolute;
+    top: 50px;
+    right: 50px;
+  }
+
+  .congratulation-message {
+    font-size: 24px;
+    margin-bottom: 50px;
+    text-align: center;
+  }
+
+  .application-info-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 15px;
+    grid-row-gap: 15px;
+    margin-top: 20px;
+    border: 2px solid $button-color;
+    padding: 20px;
+    border-radius: 14px;
+
+    .info-item:nth-child(1) {
+      grid-area: 1 / 1 / 2 / 2;
+      border: 1px solid $light-color;
+      padding: 0 10px;
+    }
+
+    .info-item:nth-child(2) {
+      grid-area: 2 / 1 / 3 / 2;
+      border: 1px solid $light-color;
+    }
+
+    .info-item:nth-child(3) {
+      grid-area: 1 / 3 / 2 / 4;
+      border: 1px solid $light-color;
+    }
+
+    .info-item:nth-child(4) {
+      grid-area: 2 / 3 / 3 / 4;
+      border: 1px solid $light-color;
+    }
+
+    .info-item:nth-child(5) {
+      grid-area: 3 / 2 / 4 / 3;
+      color: $dark-color;
+      border: 2px solid $dark-color;
+      border-radius: 14px;
+      padding: 10px;
+      margin-top: 40px;
+    }
+
+    .processing {
+      background-color: $light-color;
+    }
+
+    .on-agreed {
+      background-color: orange;
+    }
+
+    .ready {
+      background-color: greenyellow;
+    }
+
+    .rejected {
+      background-color: red;
+      color: $light-color !important;
+    }
+
+    .issued {
+      background-color: gray;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 14px;
+    }
+  }
+}
