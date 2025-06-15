@@ -3,11 +3,13 @@
     <h2 class="title">Список заявок:</h2>
     <button class="logout-btn" (click)="logout()">Выйти</button>
   </div>
+
   <div class="application" *ngFor="let user of users">
     <div class="info-item">ФИО: {{ user.fullName}}</div>
     <div class="info-item">Email: {{ user.email }}</div>
     <div class="info-item">Телефон: {{ user.phone }}</div>
     <div class="info-item">Название организации: {{ user.organization }}</div>
+
     <div class="info-item">
       Статус заявки:
       <select [ngModel]="getCurrentStatus(user)"
@@ -17,7 +19,5 @@
         </option>
       </select>
     </div>
-
   </div>
 </div>
-

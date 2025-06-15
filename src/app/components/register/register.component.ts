@@ -1,4 +1,6 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   inject,
   OnDestroy
@@ -24,6 +26,7 @@ import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { JsonServerService } from '../../services/json-server.service';
 import { AuthService } from '../../services/auth.service';
+import { TuiAlertService } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-register',
@@ -33,15 +36,11 @@ import { AuthService } from '../../services/auth.service';
     NgIf
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  styleUrl: './register.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class RegisterComponent implements OnDestroy {
-  private readonly _router = inject(Router);
-  private readonly _jsonServerService = inject(JsonServerService);
-  private readonly _authService = inject(AuthService);
-  private destroy$: Subject<void> = new Subject<void>();
-
   public registerForm = new FormGroup({
     fullName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^[a-zA-Zа-яА-ЯёЁ\s]+$/)] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
@@ -49,14 +48,33 @@ export class RegisterComponent implements OnDestroy {
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] })
   });
 
+  private readonly _router: Router = inject(Router);
+  private readonly _jsonServerService: JsonServerService = inject(JsonServerService);
+  private readonly _authService: AuthService = inject(AuthService);
+  private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private readonly alerts = inject(TuiAlertService);
+  private _destroy$: Subject<void> = new Subject<void>();
+
+  protected showNotificationInvalidForm(): void {
+    this.alerts
+      .open('Некорректные данные', {label: 'Ошибка!'})
+      .subscribe();
+  }
+
+  protected showNotificationExistingEmail(): void {
+    this.alerts
+      .open('Такой email уже зарегистрирован', {label: 'Ошибка!'})
+      .subscribe();
+  }
+
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   public onRegister(): void {
     if (this.registerForm.invalid) {
-      alert('Введите корректные данные');
+      this.showNotificationInvalidForm();
       return;
     }
 
@@ -65,19 +83,21 @@ export class RegisterComponent implements OnDestroy {
 
       switchMap(existingUsers => {
         if (existingUsers.length > 0) {
-          alert('Email уже зарегистрирован');
+          this.showNotificationExistingEmail();
           return of(null);
         } else {
           return this._jsonServerService.addUser(this.registerForm.getRawValue());
         }
       }),
 
-      takeUntil(this.destroy$)
+      takeUntil(this._destroy$)
     ).subscribe(result => {
         if (result) {
           this._router.navigate(['/user-page']);
           this._authService.login(result);
         }
+
+        this._cdr.markForCheck();
       });
   }
 

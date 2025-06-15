@@ -20,6 +20,7 @@
   }
 
   .welcome-container {
+    text-align: center;
     display: flex;
     flex-direction: column;
 
@@ -38,8 +39,16 @@
 .application-container {
   @include ui-form;
 
+  .title {
+    margin-top: 20px;
+  }
+
   .input-container {
-    width: 40%;
+    width: 50%;
+  }
+
+  .send-btn {
+    margin: 20px 0;
   }
 
   .checkbox-container {
@@ -69,7 +78,10 @@
 
   .congratulation-message {
     font-size: 24px;
+    display: flex;
+    flex-direction: column;
     margin-bottom: 50px;
+    gap: 50px;
     text-align: center;
   }
 
@@ -140,6 +152,70 @@
       justify-content: center;
       align-items: center;
       border-radius: 14px;
+      padding: 0 10px;
+      font-size: 14px;
+    }
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    .logout-btn {
+      top: 20px;
+      right: 20px;
+    }
+
+    .welcome-container {
+      margin: 10px;
+
+      .hello-user {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .application-container {
+    .input-container {
+      width: 60%;
+    }
+  }
+
+  .congratulation-container {
+    .logout-btn {
+      top: 20px;
+      right: 20px;
+    }
+
+    .congratulation-message {
+      font-size: 18px;
+    }
+
+    .application-info-container {
+      margin: 10px;
+
+      .info-item {
+        text-align: center;
+        margin: 0 -10px;
+      }
+    }
+  }
+}
+
+@media (max-height: 500px) {
+  .application-container {
+    height: 100%;
+
+    .application-form {
+      margin-bottom: 20px;
+    }
+  }
+
+  .congratulation-container {
+    height: 100%;
+
+    .logout-btn {
+      top: 20px;
+      right: 20px;
     }
   }
 }

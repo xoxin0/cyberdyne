@@ -1,4 +1,6 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   inject,
   OnDestroy,
@@ -20,6 +22,8 @@ import { IUser } from '../../interfaces/IUser';
 import { AuthService } from '../../services/auth.service';
 import { JsonServerService } from '../../services/json-server.service';
 import { NgForOf } from '@angular/common';
+import { Statuses } from '../../common/statuses.enum';
+import { TuiAlertService } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-admin-page',
@@ -29,38 +33,54 @@ import { NgForOf } from '@angular/common';
     FormsModule
   ],
   templateUrl: './admin-page.component.html',
-  styleUrl: './admin-page.component.scss'
+  styleUrl: './admin-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class AdminPageComponent implements OnInit, OnDestroy {
+  public users: IUser[] = [];
+  public statuses: Statuses[] = [...Object.values(Statuses)];
+
   private readonly _authService: AuthService = inject(AuthService);
   private readonly _jsonServerService: JsonServerService = inject(JsonServerService);
+  private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private readonly alerts = inject(TuiAlertService);
+  private _destroy$: Subject<void> = new Subject<void>();
 
-  private destroy$: Subject<void> = new Subject<void>();
-  public users: IUser[] = [];
+  protected showNotificationSuccessfully(): void {
+    this.alerts
+      .open('Статус успешно изменен', {label: 'Готово!'})
+      .subscribe();
+  }
 
-  public statuses: string[] = ['В обработке', 'На согласовании', 'Пропуск готов', 'Отклонено', 'Пропуск выдан'];
+  protected showNotificationNotSuccessfully(): void {
+    this.alerts
+      .open('Ошибка при изменении статуса', {label: 'Ошибка!'})
+      .subscribe();
+  }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.loadUsers();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  public ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   private loadUsers(): void {
-    this._jsonServerService.getAllUsers().pipe(
-      map(users => users.filter(user =>
-        user.id !== 1 &&
-        user.organization &&
-        user.organization.trim() !== ''
-      )),
+    this._jsonServerService.getAllUsers()
+      .pipe(
+        map(users => users.filter(user =>
+          user.id !== 1 &&
+          user.organization &&
+          user.organization.trim() !== ''
+        )),
 
-      takeUntil(this.destroy$)
-    ).subscribe(filteredUsers => {
-      this.users = filteredUsers;
+        takeUntil(this._destroy$)
+      ).subscribe(filteredUsers => {
+        this.users = filteredUsers;
+        this._cdr.markForCheck();
     });
   }
 
@@ -68,23 +88,25 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     const userIndex: number = this.users.findIndex(user => user.id === userId);
     if (userIndex !== -1) {
       this.users[userIndex] = { ...this.users[userIndex], status: newStatus };
+      this._cdr.markForCheck();
     }
 
     this._jsonServerService.updateUserStatus(userId, newStatus).pipe(
-      takeUntil(this.destroy$)
+      takeUntil(this._destroy$)
     ).subscribe({
-      next: (updatedUser: IUser): void => {
-        console.debug('Статус пользователя обновлен:', updatedUser);
+      next: (): void => {
+        this.showNotificationSuccessfully();
+        this._cdr.markForCheck();
       },
-      error: (error): void => {
-        console.error('Ошибка при обновлении статуса:', error);
+      error: (): void => {
+        this.showNotificationNotSuccessfully();
         this.loadUsers();
       }
     });
   }
 
   public getCurrentStatus(user: IUser): string {
-    return user.status || this.statuses[0];
+    return user.status || Statuses.IN_PROCESSING;
   }
 
   public logout(): void {

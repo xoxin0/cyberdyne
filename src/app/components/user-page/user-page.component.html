@@ -1,9 +1,9 @@
-<div class="container" *ngIf="!onApplicationForm && !isSubmitted">
+<div class="container" *ngIf="!onApplicationForm$$() && !isSubmitted$$()">
   <button class="logout-btn" (click)="logout()">Выйти</button>
   <div class="welcome-container">
 
     <div class="hello-user">
-      <h2>Здравствуйте, {{ name }}!</h2>
+      <h2>Здравствуйте, {{ currentUser?.fullName }}!</h2>
     </div>
 
     <button
@@ -17,7 +17,7 @@
 
 <div
   class="application-container"
-  *ngIf="onApplicationForm && !isSubmitted"
+  *ngIf="onApplicationForm$$() && !isSubmitted$$()"
 >
   <form [formGroup]="applicationForm" class="application-form">
     <h1 class="title">Подача заявки</h1>
@@ -110,7 +110,7 @@
   </form>
 </div>
 
-<div class="congratulation-container" *ngIf="isSubmitted">
+<div class="congratulation-container" *ngIf="isSubmitted$$()">
   <button
     (click)="logout()"
     class="logout-btn"
@@ -120,7 +120,7 @@
 
   <div class="congratulation-message">
     <h1 class="status-title-h1">Поздравляем!!!</h1>
-    <p class="status-title">Ваша заявка успешно отправлена. Ожидайте)</p>
+    <p class="status-title">Ваша заявка успешно отправлена.</p>
   </div>
 
   <h2>Ваша заявка:</h2>
@@ -131,18 +131,22 @@
 
     <p
       class="info-item"
-      *ngIf="currentUser?.organization !== undefined"
+      *ngIf="currentUser?.organization"
     >
       {{ currentUser?.organization }}
     </p>
 
     <p
-      class="info-item"
-      *ngIf="applicationForm.value.organization !== ''"
+      class="info-item status"
+      [ngClass]="{
+        'processing': currentUser?.status === Statuses.IN_PROCESSING,
+        'on-agreed': currentUser?.status === Statuses.ON_AGREED,
+        'ready': currentUser?.status === Statuses.READY,
+        'rejected': currentUser?.status === Statuses.REJECTED,
+        'issued': currentUser?.status === Statuses.ISSUED,
+      }"
     >
-      {{ applicationForm.value.organization }}
+      {{ currentUser?.status }}
     </p>
-
-    <p class="info-item status">{{ currentUser?.status }}</p>
   </div>
 </div>

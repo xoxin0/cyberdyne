@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   inject,
   OnDestroy,
@@ -25,6 +26,7 @@ import {
   tap
 } from 'rxjs';
 
+import { TuiAlertService } from '@taiga-ui/core';
 import { NgIf } from '@angular/common';
 import { JsonServerService } from '../../services/json-server.service';
 import { AuthService } from '../../services/auth.service';
@@ -38,35 +40,67 @@ import { IUser } from '../../interfaces/IUser';
     NgIf
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class LoginComponent implements OnDestroy, OnInit {
+  public loginForm = new FormGroup({
+    email: new FormControl<string>(
+      '',
+      {
+        nonNullable: true,
+        validators: [
+          Validators.required,
+          Validators.email
+        ]
+      }),
+
+    password: new FormControl<string>(
+      '',
+      {
+        nonNullable: true,
+        validators: [
+          Validators.required,
+          Validators.minLength(6)
+        ]
+      })
+  })
+
+  protected showNotificationInvalidLoginData(): void {
+    this.alerts
+      .open('Неверный email или пароль', {label: 'Ошибка!'})
+      .subscribe();
+  }
+
+  protected showNotificationInvalidForm(): void {
+    this.alerts
+      .open('Некорректные данные', {label: 'Ошибка!'})
+      .subscribe();
+  }
+
+  private readonly alerts = inject(TuiAlertService);
   private readonly _router = inject(Router);
   private readonly _jsonServerService = inject(JsonServerService);
   private readonly _authService = inject(AuthService);
+  private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private readonly ADMIN_DATA: IUser = {
     fullName: '',
     email: '',
     phone: '',
     password: ''
   };
-  private destroy$ = new Subject<void>();
+  private _destroy$ = new Subject<void>();
 
-  public loginForm = new FormGroup({
-    email: new FormControl<string>('', {nonNullable: true, validators: [Validators.required, Validators.email]}),
-    password: new FormControl<string>('', {nonNullable: true, validators: [Validators.required, Validators.minLength(6)]},)
-  })
-
-  ngOnInit(): void {
-    this._jsonServerService.getAdmin()
-      .pipe(
+  public ngOnInit(): void {
+    this._jsonServerService.getAdmin().pipe(
       map(admin => (
         this.ADMIN_DATA.email = admin.email,
         this.ADMIN_DATA.password = admin.password
       )),
-      takeUntil(this.destroy$)
-    ).subscribe( (admin) => {
+
+      takeUntil(this._destroy$)
+    ).subscribe((admin) => {
         if (
           admin === this.ADMIN_DATA.email &&
           admin === this.ADMIN_DATA.password
@@ -75,18 +109,19 @@ export class LoginComponent implements OnDestroy, OnInit {
         } else if (this._authService.isAuthenticated()) {
           this._router.navigate(['/user-page']);
         }
-      }
-    );
+
+        this._cdr.markForCheck();
+      });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  public ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   public onLogin(): void {
     if (this.loginForm.invalid) {
-      alert('Введите корректные данные');
+      this.showNotificationInvalidForm();
       return;
     }
 
@@ -107,14 +142,14 @@ export class LoginComponent implements OnDestroy, OnInit {
             this._router.navigate(['/user-page']);
             this._authService.login(user);
           } else {
-            alert('Неверный email или пароль');
+            this.showNotificationInvalidLoginData();
           }
         }
 
         return of(null);
       }),
 
-      takeUntil(this.destroy$)
+      takeUntil(this._destroy$)
     ).subscribe();
   }
 }

@@ -15,3 +15,14 @@
     }
   }
 }
+
+@media (max-width: 600px) {
+  .container {
+    .register-form {
+      .go-login-btn {
+        top: 10px;
+        left: 10px;
+      }
+    }
+  }
+}

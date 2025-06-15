@@ -47,7 +47,7 @@ $background-chat-color: #393985;
 
   .register-form, .login-form, .application-form {
     width: 600px;
-    height: 55%;
+    min-height: 450px;
     border-radius: 14px;
     display: flex;
     align-items: center;
